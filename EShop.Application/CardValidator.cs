@@ -52,6 +52,6 @@ public class CardValidator : ICardValidator
         if (Regex.IsMatch(cardNumber, @"^3[47]\d{13}$"))
             return CreditCardProvider.AmericanExpress;
 
-        return CreditCardProvider.None;
+        throw new CardNumberInvalidException();
     }
 }

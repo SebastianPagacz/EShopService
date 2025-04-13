@@ -10,13 +10,14 @@ namespace EShopService.Controllers;
 [Route("api/[controller]")]
 public class CreditCardController : ControllerBase
 {
-    private readonly CardValidator _cardValidator;
+    private readonly ICardValidator _cardValidator;
 
-    public CreditCardController(CardValidator cardValidator) 
+    public CreditCardController(ICardValidator cardValidator) 
     {
         _cardValidator = cardValidator;
     }
-    internal IActionResult Get([FromBody] string cardNumber)
+    [HttpGet]
+    public IActionResult Get([FromQuery] string cardNumber)
     {
         try
         {

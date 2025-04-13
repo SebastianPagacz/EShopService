@@ -29,7 +29,6 @@ public class CardValidationTests
     [InlineData("5221032022465829", CreditCardProvider.MasterCard)]
     [InlineData("378523393817437", CreditCardProvider.AmericanExpress)]
     [InlineData("4024 0071 6540 1778", CreditCardProvider.Visa)]
-    [InlineData("111 111 111", CreditCardProvider.None)]
     [InlineData("5530016454538418", CreditCardProvider.MasterCard)]
     public void GetCardType_ChecksValusesType_ReturnsCorrectType(string cardNumber, CreditCardProvider expectedResult)
     {
@@ -61,5 +60,15 @@ public class CardValidationTests
 
         // Act & Assert
         Assert.Throws<CardNumberTooLongException>(() => cardValidator.ValidateCard("111 111 111 111 111 111 111"));
+    }
+
+    [Fact]
+    public void GetCardType_CardNumberInvalid_ThrowsInvalidException()
+    {
+        // Arange
+        var cardValidator = new CardValidator();
+
+        // Act & Assert
+        Assert.Throws<CardNumberInvalidException>(() => cardValidator.GetCardType("111 111 111 111 111 111 111"));
     }
 }
