@@ -1,5 +1,8 @@
-
+using EShop.Domain.Repositories;
 using EShop.Application;
+using Microsoft.EntityFrameworkCore;
+using EShop.Domain.Repositories.Interfaces;
+using EShop.Domain.Repositories.Services;
 
 namespace EShopService;
 
@@ -9,7 +12,10 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
-        // Add services to the container.
+        builder.Services.AddDbContext<DataContext>(options =>
+        options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnextion")));
+
+        builder.Services.AddScoped<IProductRepository, ProductRepository>();
 
         builder.Services.AddControllers();
 
