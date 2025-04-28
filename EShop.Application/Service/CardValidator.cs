@@ -2,7 +2,7 @@
 using EShop.Domain.Enums;
 using System.Text.RegularExpressions;
 
-namespace EShop.Application;
+namespace EShop.Application.Service;
 
 public class CardValidator : ICardValidator
 {
@@ -37,7 +37,7 @@ public class CardValidator : ICardValidator
             alternate = !alternate;
         }
 
-        return (sum % 10 == 0);
+        return sum % 10 == 0;
     }
 
     public CreditCardProvider GetCardType(string cardNumber)

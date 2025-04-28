@@ -1,6 +1,6 @@
 ﻿using EShop.Domain.Enums;
 
-namespace EShop.Application
+namespace EShop.Application.Service
 {
     public interface ICardValidator
     {

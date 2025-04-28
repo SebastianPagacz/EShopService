@@ -1,30 +1,32 @@
 using EShop.Domain.Repositories;
-using EShop.Application;
 using Microsoft.EntityFrameworkCore;
 using EShop.Domain.Repositories.Interfaces;
 using EShop.Domain.Repositories.Services;
+using EShop.Application.Service;
+using EShop.Domain.Seeders;
+using System.Threading.Tasks;
 
 namespace EShopService;
 
 public class Program
 {
-    public static void Main(string[] args)
+    public static async Task Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
 
-        builder.Services.AddDbContext<DataContext>(options =>
-        options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnextion")));
+        builder.Services.AddDbContext<DataContext>(
+            options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
 
         builder.Services.AddScoped<IProductRepository, ProductRepository>();
+        builder.Services.AddScoped<ICardValidator, CardValidator>();
 
         builder.Services.AddControllers();
 
-        builder.Services.AddScoped<ICardValidator, CardValidator>();
-
-        // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
 
+        builder.Services.AddScoped<IEShopSeeder, EShopSeeder>();
         var app = builder.Build();
 
         // Configure the HTTP request pipeline.
@@ -40,6 +42,10 @@ public class Program
 
 
         app.MapControllers();
+
+        var scope = app.Services.CreateScope();
+        var seeder = scope.ServiceProvider.GetRequiredService<IEShopSeeder>();
+        await seeder.SeedAsync();
 
         app.Run();
     }

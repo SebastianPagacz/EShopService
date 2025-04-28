@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using EShop.Application;
 using EShop.Domain.CreditCardExceptions;
 using EShop.Domain.Enums;
+using EShop.Application.Service;
 
 namespace EShopService.Controllers;
 
