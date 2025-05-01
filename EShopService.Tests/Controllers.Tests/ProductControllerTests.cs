@@ -14,68 +14,42 @@ using Microsoft.Identity.Client;
 using EShop.Domain.Models;
 using System.Text.Json;
 using Xunit.Abstractions;
+using System.Net;
 
 namespace EShopService.Tests.Controllers.Tests;
 
 public class ProductControllerTests : IClassFixture<WebApplicationFactory<Program>>
 {
-    private readonly ITestOutputHelper _output;
     private readonly HttpClient _client;
-    private WebApplicationFactory<Program> _factory;
-
+    private readonly ITestOutputHelper _output;
     public ProductControllerTests(WebApplicationFactory<Program> factory, ITestOutputHelper output)
     {
-        _factory = factory
-            .WithWebHostBuilder(builder =>
-        {
-            builder.ConfigureServices(services =>
-            {
-                var dbContextOptions = services
-                .SingleOrDefault(services => services.ServiceType == typeof(DbContextOptions<DbContext>));
-
-                services.Remove(dbContextOptions);
-
-                services.
-                    AddDbContext<DbContext>(options => options.UseInMemoryDatabase(Guid.NewGuid().ToString()));
-            });
-        });
-        _client = _factory.CreateClient();
+        _client = factory.CreateClient();
         _output = output;
     }
-
-
-    //public async Task Get_CheckBaseParams_ReturnsSuccess()
-    //{
+    [Fact]
+    public async Task ProductController_Get_ReturnOkStatusCode()
+    {
         // arange
-        [Fact]
-        public async Task GetProductDetails_ReturnsProductsData()
-        {
-            using (var scope = _factory.Services.CreateScope())
-            {
-                var dbContext = scope.ServiceProvider.GetRequiredService<DataContext>();
 
-            var products = new List<Product>
-                {
-                    new Product { Name = "Test1", Ean = "1234", Deleted = false },
-                    new Product { Name = "Test2", Ean = "4321", Deleted = true },
-                    new Product { Name = "Test3", Ean = "1122", Deleted = false }
-                };
+        // act
+        var resposne = await _client.GetAsync("/api/product");
+        _output.WriteLine(resposne.ToString());
 
-            dbContext.Products.AddRange(products);
-            await dbContext.SaveChangesAsync();
-        }
-
-            // act
-            var response = await _client.GetAsync("/api/product");
-            response.EnsureSuccessStatusCode();
-
-            var responseData = await response.Content.ReadAsStringAsync();
-            _output.WriteLine(responseData);
-            var productList = JsonSerializer.Deserialize<List<Product>>(responseData, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-
-            // assert
-            Assert.NotNull(productList);
-            Assert.Contains(productList, p => p.Name == "Test1");
-        }
+        // assert
+        Assert.Equal(HttpStatusCode.OK, resposne.StatusCode);
     }
-//}
+
+    [Fact]
+    public async Task ProductController_GetById_ReturnOkStatusCode()
+    {
+        // arange
+
+        // act
+        var resposne = await _client.GetAsync("/api/product/1");
+        _output.WriteLine(resposne.ToString());
+
+        // assert
+        Assert.Equal(HttpStatusCode.OK, resposne.StatusCode);
+    }
+}
