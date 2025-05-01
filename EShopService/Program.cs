@@ -1,5 +1,6 @@
 using EShop.Domain.Repositories;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Design;
 using EShop.Domain.Repositories.Interfaces;
 using EShop.Domain.Repositories.Services;
 using EShop.Application.Service;
@@ -14,9 +15,7 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
-        builder.Services.AddDbContext<DataContext>(
-            options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-
+        builder.Services.AddDbContext<DataContext>(options => options.UseInMemoryDatabase("TestDb"));
 
         builder.Services.AddScoped<IProductRepository, ProductRepository>();
         builder.Services.AddScoped<ICardValidator, CardValidator>();

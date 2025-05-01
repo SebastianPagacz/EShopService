@@ -32,7 +32,7 @@ public class ProductRepository : IProductRepository
 
     public async Task<Product> GetByIdAsync(int id)
     {
-        return await _context.Products.FirstOrDefaultAsync(p => p.Id == id);
+        return await _context.Products.FirstOrDefaultAsync(p => p.Id == id) ?? throw new Exception("Product not found");
     }
 
     public async Task<Product> UpdateAsync(Product product)
