@@ -1,0 +1,42 @@
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity.Data;
+using Microsoft.AspNetCore.Mvc;
+using User.Domain.Models;
+using User.Application.Services;
+using System.Security.Authentication;
+using User.Domain.Exceptions;
+
+namespace UserService.Controllers;
+
+[Route("api/[controller]")]
+[ApiController]
+public class LoginController : ControllerBase
+{
+    private readonly ILoginService _loginService;
+    private readonly IJwtTokenService _tokenService;
+    public LoginController(ILoginService loginService, IJwtTokenService tokenService)
+    {
+        _loginService = loginService;
+        _tokenService = tokenService;
+    }
+
+    [HttpPost]
+    public IActionResult Login(User.Domain.Models.LoginRequest data)
+    {
+        try
+        {
+            var user = _loginService.Login(data);
+
+            var token = _tokenService.GenerateToken(user.Id, user.Roles);
+            return StatusCode(200, token);
+        }
+        catch (InvalidCredentialsException)
+        {
+            return StatusCode(404, "invalid data");
+        }
+        catch (Exception)
+        {
+            return StatusCode(404, "invalid data");
+        }
+    }
+}
