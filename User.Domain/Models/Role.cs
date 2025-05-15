@@ -6,9 +6,10 @@ using System.Threading.Tasks;
 
 namespace User.Domain.Models;
 
-public class UserDTO
+public class Role
 {
     public int Id { get; set; }
-    public string Username { get; set; } = string.Empty;
-    public List<Role> Roles { get; set; } = new List<Role>();
+    public string Name { get; set; } = string.Empty;
+
+    public List<User> Users { get; set; } = new List<User>();
 }

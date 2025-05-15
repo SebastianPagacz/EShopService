@@ -10,12 +10,6 @@ namespace EShop.Domain.Seeders;
 
 public class EShopSeeder(DataContext _context) : IEShopSeeder
 {
-    //private readonly DataContext _context;
-    //public EShopSeeder(DataContext context)
-    //{
-    //    _context = context;
-    //}
-
     public async Task SeedAsync()
     {
         if (!_context.Products.Any())

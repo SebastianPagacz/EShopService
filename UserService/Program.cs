@@ -1,21 +1,30 @@
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using User.Application.Services;
 using User.Domain.Models;
+using User.Domain.Repository;
+using User.Domain.Seeders;
 
 namespace UserService
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            builder.Services.AddDbContext<DataContext>(options =>
+                options.UseInMemoryDatabase("TestUserDb"));
+            
             // Add services to the container.
             builder.Services.AddScoped<ILoginService, LoginService>();
             builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
+
+            // Seeder
+            builder.Services.AddScoped<IUserSeeder, UserSeeder>();
 
             // Authorization
             builder.Services.AddAuthorization(options =>
@@ -69,6 +78,10 @@ namespace UserService
             app.UseAuthorization();
 
             app.MapControllers();
+
+            var scope = app.Services.CreateScope();
+            var seeder = scope.ServiceProvider.GetRequiredService<IUserSeeder>();
+            await seeder.SeedAsync();
 
             app.Run();
         }

@@ -5,6 +5,7 @@ using User.Domain.Models;
 using User.Application.Services;
 using System.Security.Authentication;
 using User.Domain.Exceptions;
+using Microsoft.AspNetCore.Authorization;
 
 namespace UserService.Controllers;
 
@@ -20,14 +21,15 @@ public class LoginController : ControllerBase
         _tokenService = tokenService;
     }
 
+
     [HttpPost]
-    public IActionResult Login(User.Domain.Models.LoginRequest data)
+    public async Task<IActionResult> Login([FromBody] User.Domain.Models.LoginRequest data)
     {
         try
         {
-            var user = _loginService.Login(data);
+            var user = await _loginService.LoginAsync(data);
 
-            var token = _tokenService.GenerateToken(user.Id, user.Roles);
+            var token = _tokenService.GenerateToken(user.Id, user.Roles.Select(n => n.Name).ToList());
             return StatusCode(200, token);
         }
         catch (InvalidCredentialsException)
@@ -39,4 +41,18 @@ public class LoginController : ControllerBase
             return StatusCode(404, "invalid data");
         }
     }
+    [HttpGet]
+    public async Task<IActionResult> Get() 
+    {
+        var users = await _loginService.UsersAsync();
+        return StatusCode(200, users);
+    }
+
+    //[HttpGet]
+    //[Authorize]
+    //[Authorize(Policy = "AdminOnly")]
+    //public IActionResult AdminPage([FromQuery]string token) 
+    //{
+    //    return StatusCode(200, "essa");
+    //}
 }

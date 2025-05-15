@@ -9,5 +9,7 @@ namespace User.Application.Services;
 
 public interface ILoginService
 {
-    UserDTO Login(LoginRequest data);
+	Task<UserDTO> LoginAsync(LoginRequest data);
+
+	Task<List<Domain.Models.User>> UsersAsync();
 }
